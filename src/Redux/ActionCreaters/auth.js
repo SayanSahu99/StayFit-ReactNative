@@ -43,7 +43,7 @@ export const logoutError = (message) => {
  * Manual Register
  *************************************/
  export const registerUser = (formBody) => (dispatch) => {
-    fetch(`${process.env.BASE_URL}users/register`, {
+    fetch(`${process.env.BASE_URL}auth/register`, {
       method: 'POST',
       body: formBody,
       headers: {
