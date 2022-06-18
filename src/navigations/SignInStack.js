@@ -16,7 +16,7 @@ export default function SignInStack() {
     return (
 
         <Stack.Navigator>
-            <Stack.Screen
+            {/* <Stack.Screen
                 options={{ headerShown: false }}
                 name="Welcome"
                 component={Welcome}
@@ -38,7 +38,7 @@ export default function SignInStack() {
                         fontWeight: 'bold',
                     },
                 }}
-            />
+            /> */}
             <Stack.Screen
                 name="SignOut"
                 options={{ headerShown: false }}
