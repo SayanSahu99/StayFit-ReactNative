@@ -1,4 +1,5 @@
 import * as ActionTypes from '../actionTypes';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 export const requestLogin = () => {
   return {
@@ -53,10 +54,11 @@ export const logoutError = (message) => {
       },
     })
     .then((response) => response.json())
-    .then((responseJson) => {
+    .then(async (responseJson) => {
       console.log(responseJson);
       // If server response message same as Data Matched
       if (responseJson.status === 'success') {
+        await AsyncStorage.setItem('user_token', responseJson.token)
         dispatch(receiveLogin());
       } 
       else {
