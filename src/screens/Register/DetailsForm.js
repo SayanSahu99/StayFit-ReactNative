@@ -8,6 +8,7 @@ import { ScrollView } from 'react-native-gesture-handler';
 import { useSelector, useDispatch } from 'react-redux';
 
 import { Picker } from "@react-native-picker/picker";
+import { addHealthDatabase } from "../../Redux/ActionCreaters/health";
 
 const validationSchema = yup.object().shape({
     name: yup
@@ -125,7 +126,7 @@ export const DetailsForm = props => {
                             activity: reduxActivity
                         }}
                         onSubmit={values => {
-                            //dispatch(addHealthFirebase(values, uid));
+                            dispatch(addHealthDatabase(values, uid));
                             props.navigation.navigate("Target");
                             console.log(values)
                         }}
