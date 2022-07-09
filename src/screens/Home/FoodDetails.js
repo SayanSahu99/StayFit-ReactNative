@@ -3,20 +3,23 @@ import { View, StyleSheet, Dimensions } from 'react-native'
 import { Image, Text, Button } from 'react-native-elements'
 import { useTheme } from '@react-navigation/native';
 import { ScrollView } from 'react-native-gesture-handler';
+import { useSelector, useDispatch } from 'react-redux';
 import Spinner from '../../components/activityIndicator';
 import { Picker } from '@react-native-picker/picker';
 import { Table, Row, Rows } from 'react-native-table-component';
+import { addBreakfastItem, addDinnerItem, addEveningSnacksItem, addLunchItem, addMorningSnacksItem } from '../../Redux/ActionCreaters/food';
 
 export default function FoodDetails({ route, navigation }) {
 
     const { colors } = useTheme();
-    const { food, measures } = route.params;
+    const { food, measures, meal } = route.params;
     const width = Dimensions.get('window').width;
     const height = Dimensions.get('window').height;
     const [amount, setAmount] = useState(1);
     const [portion, setPortion] = useState(measures[0].label);
     const [title, onChangeTitle] = React.useState(route.params.title);
     const [weight, setWeight] = React.useState(amount * measures[0].weight);
+    const dispatch = useDispatch();
     const [table, setTable] = useState({
         tableHead: ['Nutrient', 'Content'],
         tableData: [
@@ -26,7 +29,6 @@ export default function FoodDetails({ route, navigation }) {
             ['Fiber', Math.ceil(food.nutrients.FIBTG * (weight / 100)) + " g"]
         ]
     })
-
 
     useEffect(() => {
         onChangeTitle(food.label);
@@ -57,6 +59,28 @@ export default function FoodDetails({ route, navigation }) {
             title: title === '' ? 'Add Food' : title,
         });
     }, [navigation, title]);
+
+    const addFoodToState = (food) => {
+        if(meal === "breakfast") {
+            dispatch(addBreakfastItem(food));
+        }
+
+        if(meal === "morning_snacks") {
+            dispatch(addMorningSnacksItem(food));
+        }
+
+        if(meal === "lunch") {
+            dispatch(addLunchItem(food));
+        }
+
+        if(meal === "evening_snacks") {
+            dispatch(addEveningSnacksItem(food));
+        }
+
+        if(meal === "dinner") {
+            dispatch(addDinnerItem(food));
+        }
+    }
 
 
     // Food quantity picker array
@@ -93,13 +117,13 @@ export default function FoodDetails({ route, navigation }) {
                             PlaceholderContent={<Spinner />}
                         />
                 }
-                <View style={{marginBottom:20}}>
-                    <Text style={{fontSize:18, fontWeight:"bold"}}>{Math.ceil(food.nutrients.ENERC_KCAL * (weight / 100))} cal - {Math.ceil(weight)} g</Text>
+                <View style={{ marginBottom: 20 }}>
+                    <Text style={{ fontSize: 18, fontWeight: "bold" }}>{Math.ceil(food.nutrients.ENERC_KCAL * (weight / 100))} cal - {Math.ceil(weight)} g</Text>
                 </View>
                 <View>
                     <Text h4>Pick your quantity</Text>
                 </View>
-                <View style={{ flexDirection: "row", marginBottom:20 }}>
+                <View style={{ flexDirection: "row", marginBottom: 20 }}>
                     <Picker
                         selectedValue={amount}
                         style={{ height: 50, width: width / 4 }}
@@ -120,7 +144,7 @@ export default function FoodDetails({ route, navigation }) {
                         {sizing}
                     </Picker>
                 </View>
-                <View style={{marginBottom: 10}}>
+                <View style={{ marginBottom: 10 }}>
                     <Text h4>Nutrient Content</Text>
                 </View>
                 <View>
@@ -131,14 +155,28 @@ export default function FoodDetails({ route, navigation }) {
                 </View>
             </ScrollView>
             <View
-                style={{backgroundColor: colors.primary}}
+                style={{ backgroundColor: colors.primary }}
             >
-            <Button
-                title="ADD"
-                onPress={() => props.navigation.push("Main")}
-                titleStyle={{fontSize:20, alignSelf:"center"}}
-                onPress={()=>{navigation.navigate("Nutrition")}}
-            />
+                <Button
+                    title="ADD"
+                    titleStyle={{ fontSize: 20, alignSelf: "center" }}
+                    onPress={() => {
+
+                   
+                        addFoodToState([{
+                            name: food.label,
+                            protein: Math.ceil(food.nutrients.PROCNT * (weight / 100)),
+                            carbohydrates: Math.ceil(food.nutrients.CHOCDF * (weight / 100)),
+                            fat: Math.ceil(food.nutrients.FAT * (weight / 100)),
+                            fibre: Math.ceil(food.nutrients.FIBTG * (weight / 100)),
+                            caloriesPerPortion: Math.ceil(food.nutrients.ENERC_KCAL * (weight / 100)),
+                            quantity: Math.ceil(weight)
+                        }]);
+                        
+
+                        navigation.navigate("Nutrition")
+                    }}
+                />
             </View>
         </View>
     )
@@ -151,9 +189,9 @@ const styles = StyleSheet.create({
     },
 
     head: { height: 40, backgroundColor: '#f1f8ff' },
-    text: { margin: 6, fontSize:18 },
+    text: { margin: 6, fontSize: 18 },
     tableBorder: {
-        borderWidth: 2, 
+        borderWidth: 2,
         borderColor: '#c8e1ff'
     }
 
