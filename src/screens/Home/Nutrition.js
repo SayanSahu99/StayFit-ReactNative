@@ -1,86 +1,71 @@
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import { View, StyleSheet, Dimensions } from 'react-native'
 import { ListItem, Text, Card, Divider, Icon, Button } from 'react-native-elements'
-import { useSelector } from 'react-redux';
+import { useSelector, useDispatch } from 'react-redux';
 import Constants from 'expo-constants';
 import Spinner from '../../components/activityIndicator';
 import ProgressBar from 'react-native-progress/Bar';
 import { useTheme } from '@react-navigation/native';
 import { ScrollView } from 'react-native-gesture-handler';
+import { addFood, getFood } from '../../Redux/ActionCreaters/food';
 
-export default function Nutriton({ navigation }) {
+export default function Nutriton({ route, navigation }) {
 
     const width = Dimensions.get('window').width;
     const { colors } = useTheme();
     const isLoading = useSelector(state => state.auth.isLoading);
     const [calories, changeCalories] = useState(0);
+    const [date, setDate] = useState(null);
+    const breakfast = useSelector(state => state.food.breakfast);
+    const morning_snacks = useSelector(state => state.food.morning_snacks);
+    const lunch = useSelector(state => state.food.lunch);
+    const evening_snacks = useSelector(state => state.food.evening_snacks);
+    const dinner = useSelector(state => state.food.dinner);
+    const dispatch = useDispatch();
+
+    useEffect(() => {
+
+        if (route.params.date) {
+            setDate(new Date(route.params.date.toDateString()));
+            dispatch(getFood(date));
+        }
+    }, []);
+
+    useEffect(() => {
+            addFood({ breakfast, morning_snacks, evening_snacks, lunch, dinner, date });
+            console.log("Date: ", date);
+    }, [breakfast, morning_snacks, evening_snacks, lunch, dinner]);
 
     const list = [
         {
             title: 'Breakfast',
             subtitle: '100 / 700 Cal',
-            onPress: () => { navigation.navigate("Search") },
-            food: [
-                {
-                    foodName: 'egg',
-                    cal: 400,
-                    quantity: '10g'
-                },
-
-                {
-                    foodName: 'Chicken',
-                    cal: 400,
-                    quantity: '10g'
-                },
-            ]
+            onPress: () => { navigation.navigate("Search", { meal: "breakfast" }) },
+            food: breakfast
         },
         {
             title: 'Morning Snacks',
             subtitle: '100 / 700 Cal',
-            onPress: () => { console.log("Hello") },
-            food: [
-                {
-                    foodName: 'egg',
-                    cal: 400,
-                    quantity: '10g'
-                },
-            ]
+            onPress: () => { navigation.navigate("Search", { meal: "morning_snacks" }) },
+            food: morning_snacks
         },
         {
             title: 'Lunch',
             subtitle: '100 / 700 Cal',
-            onPress: () => { console.log("Hello") },
-            food: [
-                {
-                    foodName: 'egg',
-                    cal: 400,
-                    quantity: '10g'
-                },
-            ]
+            onPress: () => { navigation.navigate("Search", { meal: "lunch" }) },
+            food: lunch
         },
         {
             title: 'Evening Snacks',
             subtitle: '100 / 700 Cal',
-            onPress: () => { console.log("Hello") },
-            food: [
-                {
-                    foodName: 'egg',
-                    cal: 400,
-                    quantity: '10g'
-                },
-            ]
+            onPress: () => { navigation.navigate("Search", { meal: "evening_snacks" }) },
+            food: evening_snacks
         },
         {
             title: 'Dinner',
             subtitle: '100 / 700 Cal',
-            onPress: () => { console.log("Dinner") },
-            food: [
-                {
-                    foodName: 'egg',
-                    cal: 400,
-                    quantity: '10g'
-                },
-            ]
+            onPress: () => { navigation.navigate("Search", { meal: "dinner" }) },
+            food: dinner
         },
     ];
 
@@ -115,21 +100,23 @@ export default function Nutriton({ navigation }) {
                                     </Text>
 
                                 </View>
-
-                                {
-                                    item.food.map((l, i) => (
-                                        <View key={i}>
-                                            <Divider style={styles.dividerStyle} />
-                                            <ListItem onPress={() => console.log(i)} >
-                                                <ListItem.Content>
-                                                    <ListItem.Title><Text style={styles.listText}>{l.foodName}</Text></ListItem.Title>
-                                                    <View style={{ marginTop: 5 }}><ListItem.Subtitle><Text style={styles.listSubText}>{l.quantity}</Text></ListItem.Subtitle></View>
-                                                </ListItem.Content>
-                                                <ListItem.Subtitle><Text style={styles.listSubText}>{l.cal} Cal</Text></ListItem.Subtitle>
-                                            </ListItem>
-                                        </View>
-                                    ))
-                                }
+                                {item.food && <View>
+                                    {
+                                        item.food.map((l, i) => (
+                                            <View key={i}>
+                                                <Divider style={styles.dividerStyle} />
+                                                <ListItem onPress={() => console.log(i)} >
+                                                    <ListItem.Content>
+                                                        <ListItem.Title><Text style={styles.listText}>{l.name}</Text></ListItem.Title>
+                                                        <View style={{ marginTop: 5 }}><ListItem.Subtitle><Text style={styles.listSubText}>{l.quantity}g</Text></ListItem.Subtitle></View>
+                                                    </ListItem.Content>
+                                                    <ListItem.Subtitle><Text style={styles.listSubText}>{l.caloriesPerPortion} Cal</Text></ListItem.Subtitle>
+                                                </ListItem>
+                                            </View>
+                                        ))
+                                    }
+                                </View>}
+                                
                             </Card>
                         </View>
 
