@@ -1,16 +1,23 @@
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import { View, StyleSheet } from 'react-native'
 import { SearchBar, Text, ListItem } from 'react-native-elements'
 import { useTheme } from '@react-navigation/native';
 import { ScrollView } from 'react-native-gesture-handler';
 import Spinner from '../../components/activityIndicator';
 
-export default function SearchFood({ navigation }) {
+export default function SearchFood({route, navigation }) {
 
     const { colors } = useTheme();
     const [search, updateSearch] = useState('');
     const [data, changeData] = useState(null);
     const [loading, setLoading] = useState(false);
+    const [meal, setMeal] = useState('');
+
+    useEffect(() => {
+        if(typeof route.params.meal != undefined) {
+            setMeal(route.params.meal);
+        }
+    }, []);
 
 
     async function sendApiRequest(search) {
@@ -28,7 +35,7 @@ export default function SearchFood({ navigation }) {
            <View style={styles.listView}>
                {
                    data.hints.map((item, i) => (
-                    <ListItem key={i} onPress={() => navigation.navigate("FoodDetails", {food:item.food, measures:item.measures})} bottomDivider>
+                    <ListItem key={i} onPress={() => navigation.navigate("FoodDetails", {food:item.food, measures:item.measures, meal: meal})} bottomDivider>
                       <ListItem.Content>
                         <ListItem.Title><Text style={styles.listText}>{item.food.label}</Text></ListItem.Title>
                         <ListItem.Subtitle><Text style={styles.listSubText}>{item.food.category}</Text></ListItem.Subtitle>
