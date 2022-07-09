@@ -14,7 +14,7 @@ export default function Home({ navigation }) {
   const [date, setDate] = useState(new Date());
 
   // Getting the usename from the state
-  const name = useSelector(state => state.user.first_name)
+  const name = useSelector(state => state.health.name)
 
   const bottomSheetList = [
     {
@@ -26,7 +26,7 @@ export default function Home({ navigation }) {
       subtitle: '100 / 700 Cal',
       onPress: () => {
         setIsVisible(false);
-        navigation.navigate("Nutrition")
+        navigation.navigate("Nutrition", {date: date})
       },
     },
     {
@@ -34,7 +34,7 @@ export default function Home({ navigation }) {
       subtitle: '100 / 700 Cal',
       onPress: () => {
         setIsVisible(false);
-        navigation.navigate("Nutrition")
+        navigation.navigate("Nutrition", {date: date})
       },
     },
     {
@@ -42,7 +42,7 @@ export default function Home({ navigation }) {
       subtitle: '100 / 700 Cal',
       onPress: () => {
         setIsVisible(false);
-        navigation.navigate("Nutrition")
+        navigation.navigate("Nutrition", {date: date})
       },
     },
     {
@@ -50,7 +50,7 @@ export default function Home({ navigation }) {
       subtitle: '100 / 700 Cal',
       onPress: () => {
         setIsVisible(false);
-        navigation.navigate("Nutrition")
+        navigation.navigate("Nutrition", {date: date})
       },
     },
     {
@@ -66,14 +66,14 @@ export default function Home({ navigation }) {
       title: 'Nutrition',
       icon: 'cutlery',
       subtitle: '1000 cal / 2200 cal',
-      onPress: () => { navigation.navigate("Nutrition") },
+      onPress: () => { navigation.navigate("Nutrition", {date: date}) },
       btnOnPress: () => { setIsVisible(true) }
     },
     {
       title: 'Water',
       icon: 'tint',
       subtitle: '2/8',
-      onPress: () => navigation.navigate("Water"),
+      onPress: () => navigation.navigate("Water", {date: date}),
       btnOnPress: () => { }
     },
   ];
