@@ -8,7 +8,7 @@ import { ConfigureStore } from './src/Redux/configureStore';
 
 const MyTheme = {
   colors: {
-    primary: '#1E88E5',
+    primary: '#64DD17',
     background: '#ffffff',
   },
 };
